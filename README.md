@@ -555,6 +555,297 @@ class HighYieldSavingsAccount(BankAccount):
 
 ---
 
+
+---
+
+## 1.5 The Python Standard Library & Built-in Functions Encyclopedia
+
+### 1.5.1 The `collections` Module Deep Dive
+The `collections` module implements specialized container datatypes providing alternatives to Python's general-purpose built-ins:
+
+```mermaid
+flowchart TD
+    Collections["collections Module"] --> Counter["Counter (Frequency Map)"]
+    Collections --> DefaultDict["defaultdict (Missing Key Factory)"]
+    Collections --> Deque["deque (O(1) Double-Ended Queue)"]
+    Collections --> NamedTuple["namedtuple (Lightweight Immutable Record)"]
+    Collections --> ChainMap["ChainMap (Group Multiple Mappings)"]
+    Collections --> OrderedDict["OrderedDict (Order-Sensitive Map)"]
+```
+
+#### 1. `collections.defaultdict`: Zero-Error Key Accumulation
+```python
+from collections import defaultdict
+
+# Grouping words by their length without checking 'if key in dict'
+words = ['python', 'cpython', 'v8', 'rust', 'go', 'node', 'fastapi']
+length_groups = defaultdict(list)
+
+for word in words:
+    length_groups[len(word)].append(word)
+
+print(dict(length_groups))
+# Output: {6: ['python'], 7: ['cpython', 'fastapi'], 2: ['v8', 'go'], 4: ['rust', 'node']}
+```
+
+#### 2. `collections.Counter`: High-Performance Frequency Analysis
+```python
+from collections import Counter
+
+transactions = ['apple', 'orange', 'apple', 'banana', 'apple', 'orange']
+counts = Counter(transactions)
+
+print("Most common 2:", counts.most_common(2))
+# Output: [('apple', 3), ('orange', 2)]
+
+# Mathematical operations on Counters
+counts2 = Counter(['apple', 'banana', 'banana'])
+print("Combined:", counts + counts2)
+```
+
+#### 3. `collections.deque`: $O(1)$ Double-Ended Queue
+```python
+from collections import deque
+
+# Fixed-size sliding window (automatically discards oldest item)
+sliding_window = deque(maxlen=3)
+
+for i in range(1, 6):
+    sliding_window.append(i)
+    print(f"Added {i} -> Current Window: {list(sliding_window)}")
+
+# Fast O(1) prepend (lists require O(N) memory shift)
+dq = deque(['b', 'c'])
+dq.appendleft('a')
+print("Deque prepend:", list(dq)) # ['a', 'b', 'c']
+```
+
+#### 4. `collections.namedtuple`: Memory-Efficient Immutable Data Records
+```python
+from collections import namedtuple
+
+Point3D = namedtuple('Point3D', ['x', 'y', 'z'])
+p = Point3D(10, 20, 30)
+
+print(f"Point coordinates: x={p.x}, y={p.y}, z={p.z}")
+print(f"Indexed access: {p[0]}, {p[1]}")
+```
+
+---
+
+### 1.5.2 The `itertools` Module Deep Dive
+`itertools` provides memory-efficient, lazy iterator building blocks modeled after APL, Haskell, and SML:
+
+```mermaid
+flowchart TD
+    Itertools["itertools Module"] --> Infinite["Infinite Iterators: count, cycle, repeat"]
+    Itertools --> Combinatoric["Combinatoric: product, permutations, combinations"]
+    Itertools --> Terminating["Terminating: chain, groupby, islice, pairwise"]
+```
+
+#### 1. Infinite & Stepping Iterators: `count()`, `cycle()`, `repeat()`
+```python
+import itertools
+
+# Infinite auto-incrementing counter with float steps
+counter = itertools.count(start=10, step=2.5)
+first_3 = [next(counter) for _ in range(3)]
+print("Counter:", first_3) # [10, 12.5, 15.0]
+
+# Infinite cycle over sequence
+colors = itertools.cycle(['red', 'green', 'blue'])
+cycled = [next(colors) for _ in range(6)]
+print("Cycled:", cycled) # ['red', 'green', 'blue', 'red', 'green', 'blue']
+```
+
+#### 2. `itertools.groupby`: Categorizing Sorted Sequences
+```python
+import itertools
+
+orders = [
+    {'status': 'COMPLETED', 'amount': 100},
+    {'status': 'COMPLETED', 'amount': 250},
+    {'status': 'PENDING', 'amount': 50},
+    {'status': 'PENDING', 'amount': 30}
+]
+
+# NOTE: itertools.groupby requires data to be PRE-SORTED by key!
+orders_sorted = sorted(orders, key=lambda x: x['status'])
+
+grouped = {}
+for status, group in itertools.groupby(orders_sorted, key=lambda x: x['status']):
+    grouped[status] = sum(o['amount'] for o in group)
+
+print("Grouped Order Totals:", grouped)
+# Output: {'COMPLETED': 350, 'PENDING': 80}
+```
+
+#### 3. Combinatorics: `product()`, `permutations()`, `combinations()`
+```python
+import itertools
+
+items = ['A', 'B', 'C']
+
+# Cartesian Product (like nested loops)
+print("Product (2x2):", list(itertools.product([1, 2], ['x', 'y'])))
+
+# Permutations (Order matters: AB != BA)
+print("Permutations (length 2):", list(itertools.permutations(items, 2)))
+
+# Combinations (Order does NOT matter: AB == BA)
+print("Combinations (length 2):", list(itertools.combinations(items, 2)))
+```
+
+#### 4. `itertools.pairwise` (Python 3.10+): Sliding Overlapping Pairs
+```python
+import itertools
+
+points = [10, 15, 12, 20, 25]
+diffs = [b - a for a, b in itertools.pairwise(points)]
+print("Step-by-step differences:", diffs) # [5, -3, 8, 5]
+```
+
+---
+
+### 1.5.3 The `functools` Module Deep Dive
+`functools` provides higher-order functions that act on or return other functions:
+
+```mermaid
+flowchart TD
+    Functools["functools Module"] --> LruCache["@lru_cache / @cache (Memoization)"]
+    Functools --> Partial["partial (Pre-bind function arguments)"]
+    Functools --> SingleDispatch["@singledispatch (Generic polymorphic methods)"]
+    Functools --> Wraps["@wraps (Preserve metadata in decorators)"]
+```
+
+#### 1. Memoization with `@functools.lru_cache` and `@functools.cache`
+```python
+import functools
+import time
+
+# @functools.cache is unbounded LRU cache (Python 3.9+)
+@functools.cache
+def fibonacci(n: int) -> int:
+    if n <= 1:
+        return n
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+t0 = time.perf_counter()
+res = fibonacci(100) # Instantaneous execution via memoization!
+t1 = time.perf_counter()
+print(f"Fib(100) = {res} computed in {(t1 - t0)*1000:.3f}ms")
+
+# Inspect cache hit/miss statistics
+print("Cache Info:", fibonacci.cache_info())
+```
+
+#### 2. Function Specialization with `functools.partial`
+```python
+import functools
+
+def power(base: float, exponent: float) -> float:
+    return base ** exponent
+
+# Pre-bind exponent=2 to create a dedicated square function
+square = functools.partial(power, exponent=2)
+cube = functools.partial(power, exponent=3)
+
+print("Square(5):", square(5)) # 25
+print("Cube(3):", cube(3))     # 27
+```
+
+#### 3. Polymorphic Method Overloading with `@functools.singledispatch`
+```python
+import functools
+
+@functools.singledispatch
+def serialize_data(val):
+    raise NotImplementedError(f"Unsupported type: {type(val)}")
+
+@serialize_data.register(int)
+def _(val: int):
+    return f"INTEGER: {val}"
+
+@serialize_data.register(list)
+def _(val: list):
+    return f"LIST_COUNT: {len(val)}"
+
+@serialize_data.register(dict)
+def _(val: dict):
+    return f"KEYS: {list(val.keys())}"
+
+print(serialize_data(42))
+print(serialize_data(['a', 'b', 'c']))
+print(serialize_data({'id': 1, 'name': 'Alice'}))
+```
+
+---
+
+### 1.5.4 Modern `dataclasses` Mastery
+Introduced in Python 3.7 and significantly enhanced in 3.10–3.13, `dataclasses` eliminate boilerplate `__init__`, `__repr__`, and `__eq__` methods:
+
+```python
+from dataclasses import dataclass, field
+from typing import List
+import uuid
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class CustomerRecord:
+    email: str
+    username: str
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    tags: List[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        # Validate immutability constraints
+        if '@' not in self.email:
+            raise ValueError(f"Invalid email: {self.email}")
+
+c = CustomerRecord(email="alice@company.com", username="alice_dev")
+print("DataClass instance:", c)
+# c.username = "bob" -> Raises FrozenInstanceError!
+# slots=True allocates __slots__ for minimal memory footprint
+```
+
+| Parameter | Architectural Benefit |
+| :--- | :--- |
+| `frozen=True` | Makes instance immutable and generates `__hash__`, allowing it to be a dict key or set item |
+| `slots=True` | Automatically generates `__slots__`, reducing RAM consumption by up to 60% per object |
+| `kw_only=True` | Enforces calling with explicit keyword arguments, preventing position-shifting bugs |
+| `field(default_factory=list)` | Prevents the infamous shared mutable default argument bug in Python |
+
+---
+
+### 1.5.5 Object-Oriented File Paths with `pathlib.Path`
+`pathlib` replaces legacy `os.path` with an intuitive object-oriented interface:
+
+```python
+from pathlib import Path
+
+# Create directory path
+data_dir = Path.cwd() / "scratch" / "data"
+data_dir.mkdir(parents=True, exist_ok=True)
+
+# Write and read text
+log_file = data_dir / "app.log"
+log_file.write_text("2026-09-07 INFO: System operational\n", encoding="utf-8")
+
+# Read back
+content = log_file.read_text(encoding="utf-8")
+print("Read from pathlib:", content.strip())
+
+# Inspect file attributes
+print("File exists?", log_file.exists())
+print("File size (bytes):", log_file.stat().st_size)
+print("File suffix / extension:", log_file.suffix) # .log
+print("File stem / name without ext:", log_file.stem) # app
+
+# Clean up
+log_file.unlink()
+data_dir.rmdir()
+```
+
+
 ## 2. Stage 2: Intermediate Core & CPython Runtime
 
 ### The Compilation Pipeline (Source to Bytecode)
@@ -1476,6 +1767,145 @@ Guards (`if x > 0`) allow conditional filtering after pattern destructuring succ
 `singledispatch` wraps a base function and maintains an internal `dispatch_cache` mapping runtime types to specialized implementations. Upon invocation, it checks the type of the first argument, resolves the closest match using the argument's MRO, caches the resolved function, and dispatches the call with near-zero overhead.
 
 ---
+
+#### Q26: How does PEP 703 (Free-threaded CPython in Python 3.13) remove the Global Interpreter Lock (GIL)?
+> **Answer**:
+> PEP 703 replaces the global interpreter lock with:
+> 1. **Biased Locking**: Fast single-threaded locking for objects accessed only by their owning thread.
+> 2. **Mimalloc Memory Allocator**: Thread-local memory heaps replacing PyMalloc's global arenas.
+> 3. **Immortal Objects & Deferred Reference Counting**: Objects with infinite lifetimes (strings, numbers, singletons) bypass refcount increments entirely, allowing true multi-core parallel execution of CPU-bound Python threads.
+
+#### Q27: What is the difference between `__new__` and `__init__` in Python?
+> **Answer**:
+> - `__new__(cls, *args, **kwargs)`: Static method responsible for **allocating and creating** the new instance in memory. Returns the newly created object. Used when subclassing immutable types (`int`, `str`, `tuple`) or implementing Singletons.
+> - `__init__(self, *args, **kwargs)`: Instance method responsible for **initializing** the already-created instance. Returns `None`.
+
+#### Q28: How does Python resolve method calls with multiple inheritance (C3 Linearization Algorithm)?
+> **Answer**:
+> Python uses the **C3 Superclass Linearization algorithm** to compute the Method Resolution Order (MRO, accessible via `cls.__mro__`). C3 guarantees three properties:
+> 1. Children precede their parents.
+> 2. The order of base classes in the class definition list is preserved.
+> 3. Monotonicity: if Class A precedes Class B in the MRO of one subclass, it must precede Class B in the MRO of any other subclass.
+
+#### Q29: What is the difference between `is` and `==` in Python?
+> **Answer**:
+> - `==`: Tests for **value equality** (calls `__eq__`). Two separate objects with identical data return `True`.
+> - `is`: Tests for **identity equality** (`id(a) == id(b)`). Returns `True` only if both variables point to the exact same physical memory address in the CPython heap.
+
+#### Q30: What is the Python GIL, and why does I/O-bound code still benefit from Python multi-threading?
+> **Answer**:
+> The Global Interpreter Lock (GIL) is a mutex preventing multiple OS threads from executing CPython bytecode simultaneously. However, when a thread performs blocking I/O (network socket reads, file system writes, `time.sleep()`) or calls external C extensions (NumPy matrix operations), CPython **explicitly releases the GIL**, allowing another waiting thread to execute. Thus, multi-threading achieves high concurrency for I/O-bound systems.
+
+#### Q31: What is the difference between `deepcopy` and `shallow copy`?
+> **Answer**:
+> - **Shallow Copy (`copy.copy(x)` or `list(x)`)**: Creates a new collection object, but inserts references to the original child items. Modifying a mutable nested child modifies both copies.
+> - **Deep Copy (`copy.deepcopy(x)`)**: Recursively copies all nested objects, creating completely independent object graphs with distinct memory addresses.
+
+#### Q32: What are Descriptors and how do `@property`, `@classmethod`, and `@staticmethod` use them?
+> **Answer**:
+> A descriptor is any object defining at least one of `__get__`, `__set__`, or `__delete__`. In Python, all functions are descriptors (their `__get__` binds the instance to create bound methods). `@property` implements a data descriptor; accessing `obj.attr` triggers `property.__get__`, delegating to the getter function.
+
+#### Q33: How does `asyncio.gather()` differ from `asyncio.TaskGroup()` in Python 3.11+?
+> **Answer**:
+> - `asyncio.gather()`: If one task fails with an exception, other concurrently running tasks continue executing ("orphaned tasks"), requiring manual cancellation.
+> - `asyncio.TaskGroup()` (Structured Concurrency): Implements an async context manager (`async with asyncio.TaskGroup() as tg:`). If any task raises an exception, the task group automatically cancels all remaining in-flight tasks and combines exceptions into an `ExceptionGroup`, eliminating background task leaks.
+
+#### Q34: What is the difference between generators (`yield`) and coroutines (`async def`)?
+> **Answer**:
+> - **Generators**: Functions containing `yield` that produce sequences lazily via `next()`. Pauses execution and returns value to the caller.
+> - **Coroutines**: Functions defined with `async def` that return coroutine objects. Driven by an asynchronous event loop; pause on `await` to yield control back to the event loop while awaiting I/O completion.
+
+#### Q35: How does Python's `with` statement work under the hood?
+> **Answer**:
+> The `with expr as var:` statement invokes the Context Management Protocol:
+> 1. Evaluates `expr` to obtain the context manager.
+> 2. Calls `mgr.__enter__()` and assigns the return value to `var`.
+> 3. Executes the body block.
+> 4. Regardless of whether an exception occurred, calls `mgr.__exit__(exc_type, exc_val, exc_tb)`. If `__exit__` returns `True`, the exception is suppressed; otherwise it propagates.
+
+#### Q36: What are `__slots__` and how do they optimize memory?
+> **Answer**:
+> By default, Python instances store attributes in an internal dictionary (`self.__dict__`). A `dict` allocates extra hash table space to handle dynamic insertions, consuming $\sim 150\text{--}300$ bytes per instance. Declaring `__slots__ = ('name', 'age')` allocates a compact, fixed-size C array of pointers instead of a dictionary, reducing memory footprint by up to 60% and speeding up attribute access.
+
+#### Q37: What is the difference between `repr()` and `str()`?
+> **Answer**:
+> - `__str__()`: Returns a human-readable, user-friendly string representation intended for end-user display.
+> - `__repr__()`: Returns an unambiguous, developer-focused string representation, ideally valid Python code that could recreate the object when passed to `eval()`.
+
+#### Q38: How does Python manage integer memory (Small Integer Caching)?
+> **Answer**:
+> CPython pre-allocates and caches all integer objects in the range $[-5, 256]$ at startup in an array of `PyLongObject` structs. Any calculation producing an integer in this range reuses the cached singleton pointer. Therefore, `a = 256; b = 256; a is b` is `True`, whereas `a = 1000; b = 1000; a is b` is typically `False`.
+
+#### Q39: What is String Interning in Python?
+> **Answer**:
+> CPython automatically interns string literals that look like Python identifiers (alphanumeric characters and underscores). Interned strings are stored in an internal hash table; duplicate strings reuse the exact same pointer in memory. This allows CPython to compare string identifiers using fast pointer equality (`is`) in $O(1)$ time rather than comparing byte-by-byte in $O(N)$ time.
+
+#### Q40: What is the difference between `@classmethod` and `@staticmethod`?
+> **Answer**:
+> - `@classmethod`: Receives the class object (`cls`) as its implicit first argument. Can access and modify class-level state or serve as an alternative constructor factory (`User.from_dict()`).
+> - `@staticmethod`: Receives neither `self` nor `cls`. It behaves like a plain standalone function that is namespaced inside the class for logical organization.
+
+#### Q41: How do you prevent mutable default argument bugs in Python?
+> **Answer**:
+> Python evaluates default function arguments **once at function definition time**, not at call time. If a default argument is mutable (e.g., `def append_to(val, target=[])`), all calls share the exact same list instance in memory.
+> - **Solution**: Use `None` as the sentinel default:
+>   ```python
+>   def append_to(val, target=None):
+>       if target is None:
+>           target = []
+>       target.append(val)
+>       return target
+>   ```
+
+#### Q42: What is Metaclass in Python?
+> **Answer**:
+> A metaclass is the "class of a class". While classes define how instances behave, metaclasses define how classes themselves are constructed. The default metaclass in Python is `type`. Subclassing `type` and overriding `__new__(cls, name, bases, dct)` allows dynamic interception, validation, and alteration of class creation (e.g., ORM models, Pydantic, Django models).
+
+#### Q43: What is the difference between `threading`, `multiprocessing`, and `asyncio`?
+> **Answer**:
+> - `threading`: Concurrency via OS threads. Limited by GIL to single-core execution; ideal for I/O-bound tasks with legacy synchronous libraries.
+> - `multiprocessing`: True parallelism across multiple CPU cores by spawning separate OS processes with independent memory heaps and GILs. High inter-process communication (IPC) serialization overhead.
+> - `asyncio`: Single-threaded cooperative multitasking using non-blocking event loops and coroutines. Extremely lightweight (millions of concurrent tasks with minimal RAM).
+
+#### Q44: What is the difference between `*args` and `**kwargs`?
+> **Answer**:
+> - `*args`: Packs arbitrary excess positional arguments into an immutable `tuple`.
+> - `**kwargs`: Packs arbitrary excess keyword arguments into a mutable `dict`.
+
+#### Q45: How does Python's Generational Garbage Collector resolve circular references?
+> **Answer**:
+> While standard reference counting frees objects immediately when `ob_refcnt == 0`, it cannot detect cyclic references (e.g., Object A references Object B, which references Object A). CPython's cyclic GC runs periodically:
+> 1. Groups objects into 3 generations (Gen 0, 1, 2) based on survival age.
+> 2. Subtracts internal references within the isolated graph.
+> 3. If an unreachable cluster of objects has zero external references from the root set, it is marked as garbage and swept.
+
+#### Q46: What is a closure in Python and how does late binding affect it?
+> **Answer**:
+> A closure is an inner function that remembers variables from its enclosing lexical scope even after the outer function has finished executing.
+> - **Late Binding Pitfall**: Closures bind to variable *names*, not values. In loops (`funcs = [lambda: i for i in range(3)]`), all functions reference the variable `i`, which evaluates to `2` when called later.
+> - **Remediation**: Force early binding via default argument: `lambda i=i: i`.
+
+#### Q47: What is the difference between `list.sort()` and `sorted()`?
+> **Answer**:
+> - `list.sort()`: Modifies the original list in-place and returns `None`. More memory efficient as no new list is created.
+> - `sorted(iterable)`: Accepts any iterable and returns a **brand new sorted list**, leaving the original collection untouched.
+
+#### Q48: What is `sys.intern()` used for?
+> **Answer**:
+> `sys.intern(string)` explicitly registers the string in CPython's internal interning dictionary. In applications processing millions of repetitive strings (e.g., NLP, log parsers), interning reduces memory footprint to a single string object and converts string equality checks into instant pointer comparisons.
+
+#### Q49: What is the difference between `itertools.zip_longest()` and built-in `zip()`?
+> **Answer**:
+> - `zip(*iterables)`: Terminates as soon as the **shortest** input iterable is exhausted, discarding remaining items in longer iterables.
+> - `itertools.zip_longest(*iterables, fillvalue=None)`: Continues iterating until the **longest** iterable is exhausted, padding missing values with `fillvalue`.
+
+#### Q50: How do you profile CPU and memory performance in production Python services?
+> **Answer**:
+> 1. **Deterministic CPU Profiling**: `cProfile` and `profile` modules (`python -m cProfile -s tottime script.py`).
+> 2. **Sampling Profilers (Zero-Overhead in Production)**: **Py-Spy** or **Austin**, which inspect CPython call stacks from outside the process using OS memory syscalls.
+> 3. **Memory Profiling**: `tracemalloc` (tracks memory allocations per line) and `objgraph` (visualizes reference cycles).
+
+
 ## 7. Stage 7: Interactive Platform, Sandbox & API Reference
 
 ### Running the Interactive Web Platform
