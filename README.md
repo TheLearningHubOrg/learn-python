@@ -1,76 +1,101 @@
-# Learn Python: The Complete Beginner-to-Expert Masterclass
+# Learn Python 🐍
 
-[![CI Test Suite](https://github.com/manthanank/learn-python/actions/workflows/ci.yml/badge.svg)](https://github.com/manthanank/learn-python/actions/workflows/ci.yml)
-[![Docker Image](https://github.com/manthanank/learn-python/actions/workflows/docker.yml/badge.svg)](https://github.com/manthanank/learn-python/actions/workflows/docker.yml)
-[![Releases](https://github.com/manthanank/learn-python/actions/workflows/releases.yml/badge.svg)](https://github.com/manthanank/learn-python/actions/workflows/releases.yml)
-[![Python Version](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Code Style: Ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+<div align="center">
 
-An exhaustive, authoritative **beginner-to-expert guide** and interactive platform for Python and CPython systems architecture. This curriculum begins with zero-prerequisite syntax, control flow, functions, and OOP foundations, advances into intermediate runtime mechanics and PEP 659 adaptive bytecode execution, dives into memory internals (PyMalloc, refcounting, generational GC) and descriptors, explores advanced concurrency (the GIL, PEP 703 free-threaded 3.13, Asyncio TaskGroups), and culminates in enterprise ASGI system design, profiling, and staff-level engineering.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg?logo=python)](https://www.python.org/)
+[![Runtime](https://img.shields.io/badge/CPython-Free--Threaded%20PEP%20703-purple.svg)](https://peps.python.org/pep-0703/)
+[![Code Style](https://img.shields.io/badge/Code%20Style-Ruff-000000.svg?logo=ruff)](https://github.com/astral-sh/ruff)
+[![Test Runner](https://img.shields.io/badge/Tested%20with-Pytest-yellow.svg?logo=pytest)](https://docs.pytest.org/)
+[![Production Ready](https://img.shields.io/badge/Status-Enterprise%20Grade-brightgreen.svg)](https://github.com/TheLearningHubOrg/learn-python)
+
+**An exhaustive, authoritative masterclass on Python programming, CPython runtime internals, and enterprise systems architecture.**  
+Master PEP 659 adaptive bytecode execution, memory internals (PyMalloc, reference counting, generational GC), the GIL & PEP 703 free-threaded Python 3.13, Asyncio TaskGroups, descriptor protocols, and enterprise ASGI microservices.
+
+[Stage 1: Foundations](#1-stage-1-absolute-beginner-foundations) • [Stage 2: CPython Runtime](#2-stage-2-intermediate-core--cpython-runtime) • [Stage 3: Object Model & Memory](#3-stage-3-advanced-object-model--memory-architecture) • [Stage 4: Concurrency & GIL](#4-stage-4-expert-concurrency-asyncio--gil-internals) • [Stage 5: Enterprise Systems](#5-stage-5-enterprise-systems-design--production-engineering) • [Stage 6: Staff Interview Prep](#6-stage-6-staff--principal-python-interview-masterclass-25-qa) • [Stage 7: Interactive Platform](#7-stage-7-interactive-platform-sandbox--api-reference)
+
+<br/>
+
+<a href="https://www.buymeacoffee.com/manthanank">
+  <img src="https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-yellow?style=for-the-badge&logo=buy-me-a-coffee" alt="Buy Me A Coffee" width="180">
+</a>
+
+</div>
 
 ---
 
-## Pedagogical Roadmap: Beginner to Expert
+## 🗺️ 7-Stage Pedagogical Roadmap
 
-```text
-+-----------------------------------------------------------------------------------------------+
-|                               THE PYTHON LEARNING JOURNEY                                     |
-+-------------------+-------------------+-----------------------+-------------------------------+
-| STAGE 1           | STAGE 2           | STAGE 3               | STAGE 4 & 5                   |
-| Absolute Beginner | Intermediate Core | Advanced Internals    | Expert Concurrency & Staff    |
-+-------------------+-------------------+-----------------------+-------------------------------+
-| • What is Python? | • Scope & LEGB    | • PyObject Layout     | • GIL & PEP 703 Free-Threaded |
-| • Dynamic/Strong  | • CPython VM & AST| • PyMalloc Arenas     | • Asyncio Event Loop & Tasks  |
-| • Types & Strings | • Bytecode & dis  | • Tracing GC & Cycles | • Descriptors & Metaclasses   |
-| • Control Flow    | • PEP 659 Adapt.  | • Slots & Interning   | • ASGI Systems & Profiling    |
-| • Lists/Dicts/Sets| • Frame Eval Loop | • C3 MRO Linearization| • 25 Staff Interview Q&A      |
-+-------------------+-------------------+-----------------------+-------------------------------+
+```mermaid
+flowchart LR
+    S1["Stage 1: Syntax & LEGB"] --> S2["Stage 2: CPython & Bytecode"]
+    S2 --> S3["Stage 3: PyObject & Memory"]
+    S3 --> S4["Stage 4: Concurrency & GIL"]
+    S4 --> S5["Stage 5: ASGI & Protocols"]
+    S5 --> S6["Stage 6: Staff Interview Masterclass"]
+    S6 --> S7["Stage 7: Platform & Sandbox API"]
 ```
 
----
-
-## Table of Contents
-1. [Stage 1: Absolute Beginner Foundations](#1-stage-1-absolute-beginner-foundations)
-   - [Language Taxonomy & Design Philosophy](#language-taxonomy--design-philosophy)
-   - [The Zen of Python & Readability Conventions](#the-zen-of-python--readability-conventions)
-   - [Dynamic & Strong Type System](#dynamic--strong-type-system)
-   - [Core Syntax, Data Structures & Scoping (LEGB)](#core-syntax-data-structures--scoping-legb)
-   - [Beginner Python Essentials: Syntax, Control Flow, Functions & OOP](#beginner-python-essentials-syntax-control-flow-functions--oop)
-2. [Stage 2: Intermediate Core & CPython Runtime](#2-stage-2-intermediate-core--cpython-runtime)
-   - [The Compilation Pipeline (Source to Bytecode)](#the-compilation-pipeline-source-to-bytecode)
-   - [CPython Execution Engine (`ceval.c`) & Frame Objects](#cpython-execution-engine-cevalc--frame-objects)
-   - [PEP 659: Specializing Adaptive Interpreter (Python 3.11–3.13)](#pep-659-specializing-adaptive-interpreter-python-311313)
-   - [Bytecode Opcode Taxonomy & Disassembly](#bytecode-opcode-taxonomy--disassembly)
-3. [Stage 3: Advanced Object Model & Memory Architecture](#3-stage-3-advanced-object-model--memory-architecture)
-   - [PyObject & PyVarObject Memory Layout](#pyobject--pyvarobject-memory-layout)
-   - [PyMalloc: Arenas, Pools, and Blocks](#pymalloc-arenas-pools-and-blocks)
-   - [Reference Counting Mechanics & Deallocation](#reference-counting-mechanics--deallocation)
-   - [Generational Tracing Garbage Collector](#generational-tracing-garbage-collector)
-   - [Memory Optimization: Slots, Weakrefs, and Interning](#memory-optimization-slots-weakrefs-and-interning)
-   - [Attribute Resolution & Descriptor Protocol](#attribute-resolution--descriptor-protocol)
-   - [Method Resolution Order (MRO) & C3 Linearization](#method-resolution-order-mro--c3-linearization)
-   - [Metaclasses & Class Construction Pipeline](#metaclasses--class-construction-pipeline)
-   - [Modern Alternatives: `__init_subclass__` & Class Decorators](#modern-alternatives-__init_subclass__--class-decorators)
-4. [Stage 4: Expert Concurrency, Asyncio & GIL Internals](#4-stage-4-expert-concurrency-asyncio--gil-internals)
-   - [The Global Interpreter Lock (GIL) Mechanics](#the-global-interpreter-lock-gil-mechanics)
-   - [Free-Threaded CPython (PEP 703 in Python 3.13)](#free-threaded-cpython-pep-703-in-python-313)
-   - [Concurrency Matrix: Threading vs Multiprocessing vs Asyncio](#concurrency-matrix-threading-vs-multiprocessing-vs-asyncio)
-   - [Asyncio Architecture: Event Loop, Coroutines & TaskGroups](#asyncio-architecture-event-loop-coroutines--taskgroups)
-   - [Generators, Coroutines & Two-Way Communication](#generators-coroutines--two-way-communication)
-   - [Context Managers & Resource Guards](#context-managers--resource-guards)
-   - [Advanced Functional Machinery (`functools` & `itertools`)](#advanced-functional-machinery-functools--itertools)
-5. [Stage 5: Enterprise Systems Design & Production Engineering](#5-stage-5-enterprise-systems-design--production-engineering)
-   - [Nominal vs Structural Typing (`typing.Protocol`)](#nominal-vs-structural-typing-typingprotocol)
-   - [Generic Variance: Covariance, Contravariance, Invariance](#generic-variance-covariance-contravariance-invariance)
-   - [Runtime Validation & Pydantic v2 Architecture](#runtime-validation--pydantic-v2-architecture)
-   - [High-Throughput ASGI Architectures](#high-throughput-asgi-architectures)
-   - [Exception Groups & Structured Error Handling](#exception-groups--structured-error-handling)
-   - [Profiling, Memory Leaks & Observability](#profiling-memory-leaks--observability)
-6. [Stage 6: Staff & Principal Python Interview Masterclass (25 Q&A)](#6-stage-6-staff--principal-python-interview-masterclass-25-qa)
-7. [Stage 7: Interactive Platform, Sandbox & API Reference](#7-stage-7-interactive-platform-sandbox--api-reference)
+| Stage | Focus Domain | Core Concepts & Production Outcomes |
+| :--- | :--- | :--- |
+| **Stage 1** | **Absolute Beginner Foundations** | Language taxonomy, strong & dynamic typing, LEGB scoping, data structures, control flow, functions, OOP basics. |
+| **Stage 2** | **Intermediate Core & CPython Runtime** | Source-to-bytecode compilation, CPython `ceval.c` frame evaluation, PEP 659 specializing adaptive interpreter, opcode taxonomy (`dis`). |
+| **Stage 3** | **Advanced Object Model & Memory Architecture** | `PyObject` / `PyVarObject` C-structs, PyMalloc arenas/pools/blocks, cyclic GC, `__slots__`, descriptors, C3 MRO linearization. |
+| **Stage 4** | **Expert Concurrency, Asyncio & GIL Internals** | Global Interpreter Lock (GIL), PEP 703 free-threaded CPython 3.13, ThreadPool vs ProcessPool vs Asyncio, coroutines & TaskGroups. |
+| **Stage 5** | **Enterprise Systems Design & Production Engineering** | Nominal vs structural typing (`typing.Protocol`), generic variance, Pydantic v2 architecture, ASGI streaming, exception groups. |
+| **Stage 6** | **Staff & Principal Python Interview Masterclass** | 25 in-depth staff-level architectural scenarios, memory leak mitigation, GIL bottlenecks, event loop blocking. |
+| **Stage 7** | **Interactive Platform, Sandbox & API Reference** | Production CLI tools, circular reference visualizers, concurrency benchmarks, REST API endpoints, Docker multi-stage build. |
 
 ---
+
+## 📋 Table of Contents
+
+- [1. Stage 1: Absolute Beginner Foundations](#1-stage-1-absolute-beginner-foundations)
+  - [1.1 Language Taxonomy & Design Philosophy](#language-taxonomy--design-philosophy)
+  - [1.2 The Zen of Python & Readability Conventions](#the-zen-of-python--readability-conventions)
+  - [1.3 Dynamic & Strong Type System](#dynamic--strong-type-system)
+  - [1.4 Core Syntax, Data Structures & Scoping (LEGB)](#core-syntax-data-structures--scoping-legb)
+  - [1.5 Beginner Python Essentials: Syntax, Control Flow, Functions & OOP](#beginner-python-essentials-syntax-control-flow-functions--oop)
+- [2. Stage 2: Intermediate Core & CPython Runtime](#2-stage-2-intermediate-core--cpython-runtime)
+  - [2.1 The Compilation Pipeline (Source to Bytecode)](#the-compilation-pipeline-source-to-bytecode)
+  - [2.2 CPython Execution Engine (ceval.c) & Frame Objects](#cpython-execution-engine-cevalc--frame-objects)
+  - [2.3 PEP 659: Specializing Adaptive Interpreter (Python 3.11–3.13)](#pep-659-specializing-adaptive-interpreter-python-311313)
+  - [2.4 Bytecode Opcode Taxonomy & Disassembly](#bytecode-opcode-taxonomy--disassembly)
+- [3. Stage 3: Advanced Object Model & Memory Architecture](#3-stage-3-advanced-object-model--memory-architecture)
+  - [3.1 PyObject & PyVarObject Memory Layout](#pyobject--pyvarobject-memory-layout)
+  - [3.2 PyMalloc: Arenas, Pools, and Blocks](#pymalloc-arenas-pools-and-blocks)
+  - [3.3 Reference Counting Mechanics & Deallocation](#reference-counting-mechanics--deallocation)
+  - [3.4 Generational Tracing Garbage Collector](#generational-tracing-garbage-collector)
+  - [3.5 Memory Optimization: Slots, Weakrefs, and Interning](#memory-optimization-slots-weakrefs-and-interning)
+  - [3.6 Attribute Resolution & Descriptor Protocol](#attribute-resolution--descriptor-protocol)
+  - [3.7 Method Resolution Order (MRO) & C3 Linearization](#method-resolution-order-mro--c3-linearization)
+  - [3.8 Metaclasses & Class Construction Pipeline](#metaclasses--class-construction-pipeline)
+  - [3.9 Modern Alternatives: __init_subclass__ & Class Decorators](#modern-alternatives-__init_subclass__--class-decorators)
+- [4. Stage 4: Expert Concurrency, Asyncio & GIL Internals](#4-stage-4-expert-concurrency-asyncio--gil-internals)
+  - [4.1 The Global Interpreter Lock (GIL) Mechanics](#the-global-interpreter-lock-gil-mechanics)
+  - [4.2 Free-Threaded CPython (PEP 703 in Python 3.13)](#free-threaded-cpython-pep-703-in-python-313)
+  - [4.3 Concurrency Matrix: Threading vs Multiprocessing vs Asyncio](#concurrency-matrix-threading-vs-multiprocessing-vs-asyncio)
+  - [4.4 Asyncio Architecture: Event Loop, Coroutines & TaskGroups](#asyncio-architecture-event-loop-coroutines--taskgroups)
+  - [4.5 Generators, Coroutines & Two-Way Communication](#generators-coroutines--two-way-communication)
+  - [4.6 Context Managers & Resource Guards](#context-managers--resource-guards)
+  - [4.7 Advanced Functional Machinery (functools & itertools)](#advanced-functional-machinery-functools--itertools)
+- [5. Stage 5: Enterprise Systems Design & Production Engineering](#5-stage-5-enterprise-systems-design--production-engineering)
+  - [5.1 Nominal vs Structural Typing (typing.Protocol)](#nominal-vs-structural-typing-typingprotocol)
+  - [5.2 Generic Variance: Covariance, Contravariance, Invariance](#generic-variance-covariance-contravariance-invariance)
+  - [5.3 Runtime Validation & Pydantic v2 Architecture](#runtime-validation--pydantic-v2-architecture)
+  - [5.4 High-Throughput ASGI Architectures](#high-throughput-asgi-architectures)
+  - [5.5 Exception Groups & Structured Error Handling](#exception-groups--structured-error-handling)
+  - [5.6 Profiling, Memory Leaks & Observability](#profiling-memory-leaks--observability)
+- [6. Stage 6: Staff & Principal Python Interview Masterclass (25 Q&A)](#6-stage-6-staff--principal-python-interview-masterclass-25-qa)
+- [7. Stage 7: Interactive Platform, Sandbox & API Reference](#7-stage-7-interactive-platform-sandbox--api-reference)
+  - [7.1 CLI Architecture & Micro-Coroutines](#cli-architecture--micro-coroutines)
+  - [7.2 Docker Containerization](#docker-containerization)
+  - [7.3 REST API Reference](#rest-api-reference)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#license)
+
+---
+
 ## 1. Stage 1: Absolute Beginner Foundations
 
 Python is a **high-level, general-purpose, interpreted programming language** conceived by Guido van Rossum in 1989 and released in 1991. It is engineered with an uncompromising focus on code readability, expressiveness, and developer ergonomics. Today, Python serves as the foundational programming language for modern artificial intelligence, machine learning, data engineering, distributed backend microservices, scientific computing, and enterprise cloud automation.
@@ -1983,5 +2008,11 @@ docker run -p 8000:8000 learn-python:latest
 
 ---
 
-## License
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/TheLearningHubOrg/learn-python/issues).
+
+## 📄 License
+
 This project is open source and available under the [MIT License](LICENSE).
+
